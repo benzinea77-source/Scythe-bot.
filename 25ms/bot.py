@@ -13,20 +13,20 @@ import os
 from base64 import b64encode,b64decode
 import time # yeah 
 import requests
-from onlyfans import onlyfans,fansly,discord_reply
+#from onlyfans import onlyfans,fansly,discord_reply
 import threading
 from shutil import move as file_move
 import tempfile
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 import io
 import licensing
-from util import *
+#from util import *
 from discord.ui import Button, View, Select
 from hashlib import sha256
 import aiohttp
 import ssl, certifi
 import urllib.parse
-from obf_detect import detect_obf
+#from obf_detect import detect_obf
 
 is_localhost=False
 
@@ -74,7 +74,7 @@ class RetardCommands:
             elif 'allow_channels' in command and msg.channel.id in command['allow_channels']:
                 pass
             elif  'channelid' in command and command['channelid'] != msg.channel.id:
-                await softerror(msg,f'You can only use this command in <#{command['channelid']}>')
+                await softerror(msg,f"You can only use this command in <#{command['channelid']}>")
                 return
             elif "roles" in command:
                 if not any(role.id in command['roles'] for role in get_roles(msg.author.id)):
@@ -1528,9 +1528,9 @@ loaded_sets = loads(open("dump_user_settings.json").read())
 for i in loaded_sets:
     dump_user_settings[int(i)]=loaded_sets[i]
 oracle_keys = defaultdict(int)
-loaded_oracle_keys = loads(open("oracle_keys.json").read())
-for i in loaded_oracle_keys:
-    oracle_keys[int(i)]=loaded_oracle_keys[i]
+#loaded_oracle_keys = loads(open("oracle_keys.json").read())
+#for i in loaded_oracle_keys:
+#    oracle_keys[int(i)]=loaded_oracle_keys[i]
 class dumpConfig(View):
     def __init__(self, user):
         super().__init__(timeout=None)
@@ -1801,7 +1801,8 @@ async def obfhandler(msg,addCG=False):
         file = discord.File('./obfuscated/' + randomfilename)
         await msg.reply(obfmode,file=file)
     else:
-        await msg.reply(f"Error while obfuscating file\n```diff\n- {process.stdout.split("PROMETHEUS: ")[-1].split("")[0]}\n```")
+        p = "\27"
+        await msg.reply(f"Error while obfuscating file\n```diff\n- {process.stdout.split('PROMETHEUS: ')[-1].split(p)[0]}\n```")
 
 
 async def luabeautify(path=None,additional_options=[],content=None):
@@ -2122,9 +2123,9 @@ class MyClient(discord.Client):
                     strcheck = repliedmsg.content
                 res = requests.post('https://vector.profanity.dev', headers={'Content-Type': 'application/json'}, json={'message':strcheck}).json()
                 if 'isProfanity' in res and 'flaggedFor' in res:
-                    await msg.reply(f'This is marked as a profanity!\nScore: {round(float(res['score'])*100,2)}%\nFlagged Word: {res['flaggedFor']}')
+                    await msg.reply(f"This is marked as a profanity!\nScore: {round(float(res['score'])*100,2)}%\nFlagged Word: {res['flaggedFor']}")
                 elif 'isProfanity' in res and res['isProfanity'] == False:
-                    await msg.reply(f'This is marked as a non-profanity!\nScore:{round(float(res['score'])*100,2)}%')
+                    await msg.reply(f"This is marked as a non-profanity!\nScore:{round(float(res['score'])*100,2)}%")
                 else:
                     await msg.reply('Error.')
             # if msg.content.startswith(".ban"):
@@ -2191,7 +2192,8 @@ class MyClient(discord.Client):
                     file = discord.File('./dumps/dumped/' + filename)
                     await luabeautify('./dumps/dumped/' + filename,["remove_unused_variable"])
                     try:
-                        await msg.reply(f"{msg.author.mention}{webhooks and '\n'+webhooks or ''}",file=file)
+                        x = webhooks and '\n'+webhooks or ''
+                        await msg.reply(f"{msg.author.mention}{x}",file=file)
                     except:
                         await msg.reply("Couldnt send file. ping 33ms to get it lol")
                 elif result and result.stdout!="" and (not result.stderr or "thread 'main' has overflowed" in result.stderr):
@@ -2204,8 +2206,8 @@ class MyClient(discord.Client):
                     buffer.seek(0)
                     await msg.reply("Infinite loop while logging.",file=discord.File(fp=buffer, filename="error_output.lua"))
                 else:
-                    error_message=result and result.stderr.split("\n")[0].replace('[string "sandbox"]:','line ')
-                    await msg.reply(f"Error while dumping. Most likely an invalid script.\n```diff\n- {error_message  or "dihh error"}\n```")
+                    error_message=(result and result.stderr.split("\n")[0].replace('[string "sandbox"]:','line ')) or "dihh error"
+                    await msg.reply(f"Error while dumping. Most likely an invalid script.\n```diff\n- {error_message}\n```")
                     print("Dump error:\n",(result and result.stderr or "no stderr"))
 
             if msg.content.startswith(".udump"): # faster than dump, only tested on moonsec, only instructions. Should somewhat work on all versions of moonsec
@@ -2479,5 +2481,9 @@ class MyClient(discord.Client):
 if __name__ == "__main__":
     client = MyClient(intents=intents)
 
+    enter_token_here = None
 
-    client.run("MTM3MzgxODk1MTA0OTY3ODkyOA.Gf-d1D.wo6GwM2gW0CMfLLowxsDmZMDpV_B91L-G_JzRk")
+    if not enter_token_here:
+        print("PLEASE ENTER A TOKEN!! CHANGE THE = None line to = 'TOKEN'")
+
+    client.run(enter_token_here)

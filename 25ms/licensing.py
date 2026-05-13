@@ -1,10 +1,9 @@
 from json import loads,dumps
-from util import *
+#from util import *
 from time import time
 import asyncio
 from collections import defaultdict
 data=loads(open("licenses.json").read())
-
 
 def save():
     open("licenses.json","w").write(dumps(data))
@@ -12,9 +11,10 @@ dump_id=1373857675497963601
 guild=None
 role=None
 def init(client):
-    global guild,role
-    guild = client.get_guild(1306714913539887237)
-    role = guild.get_role(dump_id)
+    #global guild,role
+    #guild = client.get_guild(1306714913539887237)
+    #role = guild.get_role(dump_id)
+    print("meow")
 whitelisted=defaultdict(int)
 async def get_whitelisted():
     global whitelisted
@@ -31,7 +31,8 @@ def get_roles(member):
 async def claim(user,client,license=None,overwrite=False):
     global data
     new_key=randomstr(36)
-    change_msg=f"`{license}` claimed by <@{user}>, previous owner <@{license in data and data[license]['claimed'] or "NONE"}>, new key `{new_key}`"
+    prev=license in data and data[license]['claimed'] or "NONE"
+    change_msg=f"`{license}` claimed by <@{user}>, previous owner <@{prev}>, new key `{new_key}`"
     if not overwrite:
         if not license in data:
             return "Invalid license key"
@@ -78,7 +79,7 @@ async def regenerate_all():
             new_key=randomstr(36)
             data[new_key]=info
             if not member:
-                unsuccessful.append(f"Could not find <@{info["claimed"]}> -> {license}")
+                unsuccessful.append(f"Could not find <@{info['claimed']}> -> {license}")
             else:
                 channel=await member.create_dm()
                 try:await member.add_roles(role)
@@ -86,7 +87,7 @@ async def regenerate_all():
                 try:
                     print(await channel.send(f"Your recovery license for dumper access is ||{new_key}||\n-# Save it somewhere safe in case you get termed, no refunds if you loose it :p"))
                 except:
-                    unsuccessful.append(f"Couldnt send dm to <@{info["claimed"]}> -> {license}")
+                    unsuccessful.append(f"Couldnt send dm to <@{info['claimed']}> -> {license}")
         print(f"Deleted {license}")
         del data[license]
     save()
